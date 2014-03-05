@@ -1,11 +1,10 @@
 module RandomGraph (
   buildERGraph
+  , buildWSGraph
 ) where
 
 import System.Random
 import Data.Graph
-import qualified Data.Map.Lazy as L
-import qualified Data.Map.Strict as S
 
 
 -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -24,9 +23,6 @@ wsShuffle g p n k x = let (g', g'') = split g
                           r = take (length x) $ randoms g :: [Double]
                           f = \x -> x < p
                           l = quot k 2
-                          -- pos = map (\(x,y,n) -> [x+1..y-1] ++ [y+1..n+x-1]) $ zip3 a1 a2 $ replicate n $ length x
-
-                          -- low = [l+2..n+l+1]
                           s = map (\(r,l,u) -> floor (fromIntegral l + r* fromIntegral(u-l))) $ zip3 c a b
                       in wsFilter f r x n (quot k 2) g''
 
