@@ -131,3 +131,136 @@ p10 x = p10 x [] 1
 p10P :: Eq a => [a] -> [(a, Int)]
 p10P x = zip (fmap head g) (fmap length g)
          where g = group x
+
+--------------------------
+-- P11
+--------------------------
+
+type Count = Int
+data Encode a = Single a | Multiple a Count deriving (Show)
+
+p11 :: (Eq a) => [a] -> [Encode a]
+p11 x = map (\(x,y) -> if y > 1 then Multiple x y else Single x) z
+        where z = p10 x
+
+p11P :: (Eq a) => [a] -> [Encode a]
+p11P x = map f $ p10P x
+    where f = \(x,y) -> if y > 1 then Multiple x y else Single x
+
+--------------------------
+-- P12
+--------------------------
+
+p12 :: [Encode a] -> [a]
+p12 x = p12' x []
+        where
+          p12' ((Multiple val count):y) z = p12' y (z ++ replicate count val)
+          p12' ((Single val):y) z = p12' y (z ++ [val])
+          p12' [] z = z
+
+p12P :: [Encode a] -> [a]
+p12P x = foldl1 (++) $ map f x
+    where f = \t -> case t of
+                      Multiple val count -> replicate count val
+                      Single val -> [val]
+
+--------------------------
+-- P13 ?
+--------------------------
+
+--------------------------
+-- P14
+--------------------------
+
+p14 :: [a] -> [a]
+p14 x = p14' x []
+    where p14' (x:y:ys) z = p14' (y:ys) (z ++ [x,x])
+          p14' (x:[]) z = z ++ [x,x]
+          p14' [] z = z
+
+p14P :: [a] -> [a]
+p14P x = foldl1 (++) $ map (replicate 2) x
+
+--------------------------
+-- P15
+--------------------------
+
+p15 :: [a] -> Int -> [a]
+p15 x n = p15' x n []
+    where p15' (x:y:ys) n z = p15' (y:ys) n (z ++ (rep n x))
+          p15' (x:[]) n z = (z ++ (rep n x))
+          p15' [] n z = z
+          rep n x = rep' n x []
+              where rep' 0 x z = z
+                    rep' n x z = rep' (n-1) x (z ++ [x])
+
+p15P :: [a] -> Int -> [a]
+p15P x n = foldl1 (++) $ map (replicate n) x
+
+--------------------------
+-- P16
+--------------------------
+
+p16 :: [a] -> Int -> [a]
+p16 x n = p16' x n 1 []
+    where p16' (x:y) n d z = if n == d
+                             then p16' y n 1 z
+                             else p16' y n (d+1) (z ++ [x])
+          p16' [] _ _ z = z
+
+p16P :: [a] -> Int -> [a]
+p16P x n = map fst $ filter (\(x,y) -> y `rem` n /= 0) $ zip x [1..]
+
+--------------------------
+-- P17
+--------------------------
+
+p17 :: [a] -> Int -> ([a],[a])
+p17 x n
+    | n < 0 = ([],x)
+    | n > length x = (x,[])
+    | otherwise = p17' x n 0 ([],[])
+    where p17' (x:y) n c (z1,z2) = if n == c
+                                   then (z1,x:y)
+                                   else p17' y n (c+1) (z1 ++ [x],[])
+
+p17P :: [a] -> Int -> ([a],[a])
+p17P x n = splitAt n x
+
+--------------------------
+-- P18
+--------------------------
+
+p18 :: [a] -> Int -> Int -> [a]
+p18 x l h
+    | l < 0 = []
+    | h > length x = x
+    | otherwise = p18' x l h l []
+    where p18' x l h t z = if t == h
+                           then z
+                           else p18' x l h (t+1) (z ++ [x !! t])
+
+p18P :: [a] -> Int -> Int -> [a]
+p18P x l h = let (_,s) = splitAt l x
+                 (e,_) = splitAt (h-l) s
+             in e
+
+--------------------------
+-- P19
+--------------------------
+
+p19 :: [a] -> Int -> [a]
+p19 x n
+    | n < 0 = p19 x (-n)        -- Check this! Rotate left?
+    | n == lx = x
+    | otherwise = p19' x (n `rem` lx) 0 []
+    where lx = length x
+          p19' l@(x:ys) n' t z = if t == n'
+                                 then l ++ z
+                                 else p19' ys n' (t+1) (z ++ [x])
+
+p19P :: [a] -> Int -> [a]
+p19P x n = (++) y1 y2
+    where y1 = snd s
+          y2 = fst s
+          s = splitAt n x
