@@ -121,12 +121,13 @@ p9P = group
 -- P10
 --------------------------
 
-p10 :: (Eq a) => [a] -> [[a]]
+p10 :: (Eq a) => [a] -> [(a,Int)]
 p10 x = p10 x [] 1
     where p10 (x:y:ys) z n = if x == y
                              then p10 (y:ys) z (n+1)
                              else p10 (y:ys) (z ++ [(x,n)]) 1
           p10 (x:[]) z n = z ++ [(x,n)]
 
-p10P :: (Eq a) => [a] -> [[a]]
-p10P x = zip (fmap head x) (fmap length x)
+p10P :: Eq a => [a] -> [(a, Int)]
+p10P x = zip (fmap head g) (fmap length g)
+         where g = group x
