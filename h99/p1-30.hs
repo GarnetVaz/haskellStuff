@@ -1,6 +1,6 @@
 -- Problems 1 - 10 with/without using Prelude functions
 import Data.List (nub, group)
-
+import System.Random
 --------------------------
 -- P1
 --------------------------
@@ -289,4 +289,34 @@ p20P x n
 
 --------------------------
 -- P21
+--------------------------
+
+p21 :: [a] -> Int -> a -> [a]
+p21 x n v
+    | n < 0 = v:x
+    | n > length x = x ++ [v]
+    | otherwise = (++) l (v:h)
+    where (l,h) = p21' x n 1 []
+          p21' r@(x:y) n t z = if n == t
+                               then (z,r)
+                               else p21' y n (t+1) (z ++ [x])
+
+p21P :: [a] -> Int -> a -> [a]
+p21P x n v
+     | n < 0 = v:x
+     | n - 1 > length x = x ++ [v]
+     | otherwise = (++) l (v:h)
+     where (l,h) = splitAt (n-1) x
+
+--------------------------
+-- P22
+--------------------------
+
+p22 :: Int -> Int -> [Int]
+p22 l h
+    | h < l = error "Max must be more than min"
+    | otherwise = [l..h]
+
+--------------------------
+-- P23
 --------------------------
