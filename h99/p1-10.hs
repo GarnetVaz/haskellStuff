@@ -1,5 +1,5 @@
 -- Problems 1 - 10 with/without using Prelude functions
-import Data.List (nub)
+import Data.List (nub, group)
 
 --------------------------
 -- P1
@@ -102,3 +102,31 @@ p8 x = p8' x []
 
 p8P :: (Eq a) => [a] -> [a]
 p8P = nub
+
+--------------------------
+-- P9
+--------------------------
+
+p9 :: (Eq a) => [a] -> [[a]]
+p9 x = p9' x [] 1
+    where p9' (x:y:ys) z n = if x == y
+                             then p9' (y:ys) z (n+1)
+                             else p9' (y:ys) (z ++ [(replicate n x)]) 1
+          p9' (x:[]) z n = z ++ [(replicate n x)]
+
+p9P :: (Eq a) => [a] -> [[a]]
+p9P = group
+
+--------------------------
+-- P10
+--------------------------
+
+p10 :: (Eq a) => [a] -> [[a]]
+p10 x = p10 x [] 1
+    where p10 (x:y:ys) z n = if x == y
+                             then p10 (y:ys) z (n+1)
+                             else p10 (y:ys) (z ++ [(x,n)]) 1
+          p10 (x:[]) z n = z ++ [(x,n)]
+
+p10P :: (Eq a) => [a] -> [[a]]
+p10P x = zip (fmap head x) (fmap length x)
