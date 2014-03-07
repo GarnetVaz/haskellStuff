@@ -264,3 +264,29 @@ p19P x n = (++) y1 y2
     where y1 = snd s
           y2 = fst s
           s = splitAt n x
+
+--------------------------
+-- P20
+--------------------------
+
+p20 :: [a] -> Int -> [a]
+p20 x n
+    | n < 0 = x
+    | n > lx = x
+    | otherwise = p20' x n 1 []
+    where lx = length x
+          p20' (y:ys) n t z = if t == n
+                              then z ++ ys
+                              else p20' ys n (t+1) (z ++ [y])
+
+p20P :: [a] -> Int -> [a]
+p20P x n
+    | n < 0 = x
+    | n > length x = x
+    | otherwise = (++) l h
+    where (s,h) = splitAt n x
+          l = init s
+
+--------------------------
+-- P21
+--------------------------
