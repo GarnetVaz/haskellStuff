@@ -1,6 +1,7 @@
 -- Problems 1 - 10 with/without using Prelude functions
-import Data.List (nub, group)
+import Data.List (nub, group, sort)
 import System.Random
+
 --------------------------
 -- P1
 --------------------------
@@ -321,13 +322,30 @@ p22 l h
 -- P23
 --------------------------
 
+p23 :: (Ord a, RandomGen g) => g -> [a] -> Int -> [a]
+p23 s x n = let
+    lx = length x
+    z = sort $ flip zip x (take lx $ randoms s :: [Double])
+    in take n $ map snd z
+            -- Need to change this to with replacement
 --------------------------
 -- P24
 --------------------------
 
+p24 :: (Ord a, RandomGen g) => g -> [a] -> Int -> [a]
+p24 s x n
+    | n >= length x = x
+    | otherwise = let
+                  lx = length x
+                  z = sort $ flip zip x (take lx $ randoms s :: [Double])
+                  in take n $ map snd z
+                     -- Without replacement
 --------------------------
 -- P25
 --------------------------
+
+p25 :: (Ord a, RandomGen g) => g -> [a] -> [a]
+p25 s x = p23 s x (length x)
 
 --------------------------
 -- P26
