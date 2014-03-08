@@ -359,6 +359,13 @@ p25 s x = p23 s x (length x)
 -- P28
 --------------------------
 
+p28 :: [[a]] -> [[a]]
+p28 x = s
+    where l = length x
+          ll = map length x
+          t = map snd $ sort $ zip ll [1..l]
+          s = [x !! (i-1) | i <- t]
+
 --------------------------
 -- P29
 --------------------------
