@@ -1,5 +1,8 @@
+{-# LANGUAGE BangPatterns #-}
 -- Arithmetic problems
-import Data.List (group)
+import Data.List (group, foldl')
+import Control.Applicative
+
 ----------------------
 -- P31
 ----------------------
@@ -63,10 +66,44 @@ p36 y = map (\x -> (head x,length x)) $ group $ p35 y
 -- P37
 ----------------------
 
-p37 :: Int -> Int
-p37 x = sum $ map snd $ p36 x
--- Mistake in p34!
+-- p37 :: Int -> Int
+-- p37 x = (+) 1 $ foldl' (\ acc (x,y) -> (x-1)*x^(y-1) + acc) 0 $ p36 x
+-- Mistake in p34?
 
 ----------------------
--- P37
+-- P38
 ----------------------
+
+p38 :: Integral a => a -> a -> [a]
+p38 l h = go l h [2,1]
+          where go !s h !z
+                   | s < 2 = z
+                   | s == h = z
+                   | otherwise = if any (==0) $ map (rem s) [2..t]
+                                 then go (s+1) h z
+                                 else go (s+1) h (s:z)
+                                     where t = ceiling . sqrt $ fromIntegral s
+
+----------------------
+-- P39
+----------------------
+
+p39 :: Integral t => t -> (t, t, t)
+p39 x = if odd x
+        then error "Number must be even"
+        else let p = p38 3 x
+                 r = pure (\x y -> ((x+y),x,y)) <*> p <*> p
+             in fst . head . filter (\((z,x,y),s) -> z == s) $ zip r (repeat x)
+
+----------------------
+-- P40
+----------------------
+
+p40 :: Integral a => a -> a -> [(a, a, a)]
+p40 l h = go l h []
+          where go !l h !z
+                    | l > h = z
+                    | otherwise = if even l
+                                  then go (l+1) h (r:z)
+                                  else go (l+1) h z
+                                       where r = p39 l
