@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 -- Problems 1-10
 -- Brute force solutions to get accustomed to performace bottlenecks in haskell
 import Data.List as L
@@ -60,6 +61,13 @@ p5 :: Integral a => [a] -> [a] -> Maybe Int
 p5 x l = pure (+) <*> Just 1 <*> res
          where res = findIndex (==True) $ fmap (all (==0)) $ LS.chunksOf (length l) $ liftA2 rem x l
 
+-- Alternate solution using recursion which is much faster
+p5' :: Integral a => a -> [a] -> a
+p5' s l = go s l
+    where go s l = if all (==0) $ map (rem s) l
+                   then s
+                   else go (s+1) l
+
 -- -- -- -- -- -- -- --
 -- -- P6 Sum square difference
 -- -- -- -- -- -- -- --
@@ -70,7 +78,15 @@ p6 x = (-) ((^2) (foldl1 (+) [1..x])) (foldl1 (+) $ map (^2) [1..x])
 -- -- -- -- -- -- -- --
 -- -- P7
 -- -- -- -- -- -- -- --
--- use code from h99
+
+p7 :: (Eq a, Integral a1, Num a) => a -> a1
+p7 n = go 3 [2] 1
+    where go !x !z !s = if s == n
+                        then head z
+                        else if any (==0) $ map (rem x) [2..l]
+                             then go (x+1) z s
+                             else go (x+1) (x:z) (s+1)
+                                 where l = ceiling $ sqrt $ fromIntegral x
 
 -- -- -- -- -- -- -- --
 -- -- P8 Largest product in series
@@ -90,5 +106,14 @@ p8 x n = go x n 0
 p9 = (\(x,y,z) -> x*y*z) $ head [(a,b,c) | b <- [1..1000], a <- [1..b], let c = 1000 - a - b, a^2 + b^2 == c^2]
 
 -- -- -- -- -- -- -- --
--- -- P10
+-- -- P10 Summation of primes
 -- -- -- -- -- -- -- --
+
+p10 :: Integral a => a -> a
+p10 l = go 3 3
+    where go !x !s = if x > l
+                     then s
+                     else if any (==0) $ map (rem x) [2..t]
+                          then go (x+1) s
+                          else go (x+1) (s+x)
+                              where t = ceiling $ sqrt $ fromIntegral x
