@@ -1,5 +1,6 @@
 {-# LANGUAGE BangPatterns #-}
 -- Arithmetic problems
+
 import Data.List (group, foldl')
 import Control.Applicative
 
