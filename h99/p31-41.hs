@@ -3,6 +3,7 @@
 
 import Data.List (group, foldl')
 import Control.Applicative
+import Control.Arrow
 
 ----------------------
 -- P31
@@ -31,9 +32,7 @@ p32 x y = go l h
 ----------------------
 
 p33 :: Int -> Int -> Bool
-p33 x y = if p32 x y == 1
-          then True
-          else False
+p33 x y = p32 x y == 1
 
 ----------------------
 -- P34
@@ -60,8 +59,8 @@ p35 x = go x b 2 []
 -- P36
 ----------------------
 
-p36 :: Int -> [(Int, Int)]
-p36 y = map (\x -> (head x,length x)) $ group $ p35 y
+p36 :: Int -> [[c] -> (c, Int)]
+p36 y = map (\x -> head &&& length) $ group $ p35 y
 
 ----------------------
 -- P37
@@ -80,7 +79,7 @@ p38 l h = go l h [2,1]
           where go !s h !z
                    | s < 2 = z
                    | s == h = z
-                   | otherwise = if any (==0) $ map (rem s) [2..t]
+                   | otherwise = if elem 0 $ map (rem s) [2..t]
                                  then go (s+1) h z
                                  else go (s+1) h (s:z)
                                      where t = ceiling . sqrt $ fromIntegral s
@@ -93,7 +92,7 @@ p39 :: Integral t => t -> (t, t, t)
 p39 x = if odd x
         then error "Number must be even"
         else let p = p38 3 x
-                 r = pure (\x y -> ((x+y),x,y)) <*> p <*> p
+                 r = pure (\x y -> (x+y,x,y)) <*> p <*> p
              in fst . head . filter (\((z,x,y),s) -> z == s) $ zip r (repeat x)
 
 ----------------------
