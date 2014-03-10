@@ -16,6 +16,15 @@ assign x = fmap (f . flip zip [1..]) x
                                                        else (oldx,oldy))
                           (100.0,-1) d)
 
+avg :: [(Double, Double)] -> (Double, Double)
+avg x = let lx = (fromIntegral (length x) :: Double)
+            sx = foldl (\(oldx, oldy) (x,y) -> (oldx+x,oldy+y)) (0.0,0.0) x
+        in ((fst sx)/lx, (snd sx)/lx)
+
+-- updateCenters :: [(Double, Double)] -> [(Double, Double)] -> [(Double, Double)]
+-- updateCenters xs mus =
+
+
 -- main = print dists where
 points = zip [1..4 :: Double] [1..4 :: Double]
 centers = zip [10..12 :: Double] [10..12 :: Double]
