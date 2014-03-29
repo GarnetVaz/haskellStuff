@@ -8,8 +8,13 @@ import System.Random
 
 p1 :: [a] -> a
 p1 [x] = x
-p1 (x:xs) = p1 xs
+p1 (_:xs) = p1 xs
 p1 _ = error "Empty list"       -- Pattern matching in order.
+
+myLast :: [a] -> Maybe a
+myLast [x] = Just x
+myLast (x:xs) = myLast xs
+myLast [] = Nothing
 
 p1P :: [a] -> a
 p1P = last
@@ -23,7 +28,7 @@ p2 (x:xs) = p2 xs
 p2 _ = error "List not long enough"
 
 p2P :: [a] -> a
-p2P = head . reverse . init
+p2P = last . init
 
 --------------------------
 -- P3
@@ -48,7 +53,7 @@ p3P x n
 p4 :: (Integral b) => [a] -> b
 p4 x = p4' x 0
     where p4' [] n = n
-          p4' (x:xs) n = p4' xs $! (n+1)
+          p4' (_:xs) n = p4' xs $! (n+1)
 
 p4P :: [a] -> Int
 p4P = length
@@ -86,7 +91,8 @@ data NestedList a = Elem a | List [NestedList a] deriving (Show)
 -- p7 :: NestedList a -> [a]
 -- p7 x = p7 x []
 --     where p7 ()
-
+p7 :: [[a]] -> [a]
+p7 = foldl1 (++)
 
 -- p7P :: NestedList a -> [a]
 -- p7P =
@@ -373,3 +379,5 @@ p28 x = s
 --------------------------
 -- P30
 --------------------------
+main :: IO()
+main = undefined
